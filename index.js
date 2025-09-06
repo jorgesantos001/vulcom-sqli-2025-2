@@ -29,7 +29,16 @@ app.post('/login', (req, res) => {
     const { username, password } = req.body;
     
     // CONSULTA SQL VULNERÁVEL 🚨
-    const query = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
+    // Explicação da vulnerabilidade:
+        // Vulnerabilidade: SQL Injection
+        // Exemplo de exploração:
+        // Se o usuário inserir:
+        //   username: jorge
+        //   password: ' OR '1'='1
+        // A query gerada será:
+        //   SELECT * FROM users WHERE username = 'jorge' AND password = '' OR '1'='1'
+        // O trecho OR '1'='1' sempre retorna verdadeiro, permitindo o login sem senha válida.
+        const query = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
     
     db.all(query, [], (err, rows) => {
         if (err) {
