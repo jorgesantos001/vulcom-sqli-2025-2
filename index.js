@@ -38,9 +38,15 @@ app.post('/login', (req, res) => {
         // A query gerada será:
         //   SELECT * FROM users WHERE username = 'jorge' AND password = '' OR '1'='1'
         // O trecho OR '1'='1' sempre retorna verdadeiro, permitindo o login sem senha válida.
-        const query = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
+        const query = `SELECT * FROM users WHERE username = ? AND password = ?`
+        const query2 = 'SELECT * FROM flags'
     
-    db.all(query, [], (err, rows) => {
+    //db.all(query, [], (err, rows) => {
+        /* Os valores dos parametros são passados em db.all no segundo argumento,
+        como vetor. Tais valores são sanitizados antes de serem incorporados
+        à consulta
+        */
+    db.all(query, [username, password], (err, rows) => {
         if (err) {
             return res.send('Erro no servidor');
         }
